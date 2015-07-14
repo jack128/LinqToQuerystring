@@ -19,12 +19,14 @@
 
         public override Expression BuildLinqExpression(IQueryable query, Expression expression, Expression item = null)
         {
-            var fixedexpr = Expression.Call(typeof(Queryable), "Cast", new[] { inputType }, query.Expression);
-
-            query = query.Provider.CreateQuery(fixedexpr);
+            if (!typeof (IQueryable<>).MakeGenericType(inputType).IsInstanceOfType(query))
+            {
+                var fixedexpr = Expression.Call(typeof (Queryable), "Cast", new[] {inputType}, query.Expression);
+                query = query.Provider.CreateQuery(fixedexpr);
+            }
 
             var parameter = item ?? Expression.Parameter(inputType, "o");
-            Expression childExpression = fixedexpr;
+            Expression childExpression = query.Expression;
 
             MethodInfo addMethod = typeof(Dictionary<string, object>).GetMethod("Add");
             var elements = this.ChildNodes.Select(
