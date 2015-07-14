@@ -26,6 +26,8 @@
         /// </summary>
         public static Dictionary<string, CustomNodeMappings> CustomNodes { get; set; }
 
+        public static bool SupportInitDictionaryInQuery { get; set; }
+
         public static void Reset()
         {
             EnumerableTypeMap = DefaultTypeMap;

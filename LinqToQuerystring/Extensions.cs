@@ -165,8 +165,10 @@
             // 1. Linq to Entities does not support projection onto list initialisers with more than one value
             // 2. We cannot build an anonymous type using expression trees as there is compiler magic that must happen.
             // There is a solution involving reflection.emit, but is it worth it? Not sure...
-
-            var result = constrainedQuery.GetEnumeratedQuery().AsQueryable();
+            
+            var result = constrainedQuery;
+            if (!Configuration.SupportInitDictionaryInQuery) 
+                result = result.GetEnumeratedQuery().AsQueryable();
             return
                 result.Provider.CreateQuery<Dictionary<string, object>>(
                     node.BuildLinqExpression(result, result.Expression));
